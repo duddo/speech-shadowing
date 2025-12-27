@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speech Shadowing</title>
+</head>
+<body>
+    <h1>Speech Shadowing</h1>
+    <p>Listen and speak back</p>
+    <button onclick="record()">Record</button>
+    <button onclick="stop()">Stop</button>
+    <audio id="recorded" controls></audio>
+    <p>Send after stopping:</p>
+    <button onclick="send()">Send</button>
+    <p id="resp"></p>
+
+
+    <script>
+        let chunks = [];
+        let recorder;
+        let audioBlob;
+        let stream;
+        const recorded = document.getElementById('recorded');
+
+        async function record() {
+            console.log("recording");
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({audio: true});
+                const options = {mimeType: 'audio/webm'};
+                recorder = new MediaRecorder(stream, options);
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = () => {
+                    audioBlob = new Blob(chunks, {type: 'audio/webm'});
+                    recorded.src = URL.createObjectURL(audioBlob);
+
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                };
+
+                recorder.start();
+            }
+            catch (error)
+            {
+                console.error("Error recording:", error);
+            }
+        }
+
+        function stop() {
+            console.log("stopping");
+            recorder.stop();
+        }
+
+        async function send() {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.webm')
+
+            response = await fetch("http://localhost:8080/audio", {
+                method: 'POST',
+                body: formData
+            });
+
+            respTag = document.getElementById('resp')
+            respTag.innerText = await response.text();
+        }
+    </script>
+</body>
+</html>
