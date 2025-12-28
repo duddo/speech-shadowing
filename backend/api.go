@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func start() {
+func startServer() {
 	http.HandleFunc("/audio", audioHandler)
 
 	fs := http.FileServer(http.Dir("../static"))
