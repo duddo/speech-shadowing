@@ -15,4 +15,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // solo per sviluppo quando be e fe sono sue due porte diverse
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8080'
+    }
+  }
 })
