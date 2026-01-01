@@ -7,7 +7,16 @@ func main() {
 
 	config := LoadConfig()
 
-	Connect(config)
+	db, err := Connect(config)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	// StartServer(config)
+
+	err = db.Close()
+	if err != nil {
+		return
+	}
 }
