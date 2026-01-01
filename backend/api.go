@@ -1,63 +1,57 @@
 package main
 
 import (
-	"fmt"
-	"io"
+	"log"
 	"net/http"
-	"os"
-	"os/exec"
-	"path/filepath"
+
+	"github.com/gin-gonic/gin"
 )
 
-func startServer() {
-	http.HandleFunc("/audio", audioHandler)
+func StartServer(config *Configuration) {
+	router := gin.Default()
+	router.GET("/segments", getSegments)
+	router.GET("/segments/:id", getSegmentByID)
+	router.POST("/segments", postSegments)
 
-	fs := http.FileServer(http.Dir("../static"))
-	http.Handle("/", fs)
-
-	fmt.Println("Listening on :8080")
-
-	http.ListenAndServe(":8080", nil)
+	err := router.Run(config.Addr())
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func audioHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("receiving")
+func getSegments(c *gin.Context) {
+	segments := []SpeechSegment{
+		{ID: "1", Title: "ciao"},
+		{ID: "2", Title: "ciao2"},
+	}
 
-	err := r.ParseMultipartForm(10 << 20)
-	if err != nil {
-		fmt.Println(err)
+	c.IndentedJSON(http.StatusOK, segments)
+}
+
+func getSegmentByID(c *gin.Context) {
+	id := c.Param("id")
+
+	segments := []SpeechSegment{
+		{ID: "1", Title: "ciao"},
+		{ID: "2", Title: "ciao2"},
+	}
+
+	for _, a := range segments {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Segment " + id + " not found"})
+}
+
+func postSegments(c *gin.Context) {
+	var newSeg SpeechSegment
+
+	if err := c.BindJSON(&newSeg); err != nil {
 		return
 	}
 
-	file, _, err := r.FormFile("audio")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer file.Close()
-
-	dst, err := os.Create(filepath.Join(".", "recording.webm"))
-	_, err = io.Copy(dst, file)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	command := exec.Command("ffmpeg", "-i", "recording.webm", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", "recording.wav")
-	out, err := command.Output()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(out))
-
-	command = exec.Command("/opt/homebrew/Cellar/whisper-cpp/1.8.2/bin/whisper-cli", "-m", "ggml-base.en.bin", "recording.wav", "--output-txt", "")
-	out, err = command.Output()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(out))
-
-	w.Write([]byte("You said: " + string(out)))
+	c.IndentedJSON(http.StatusCreated, newSeg)
 }

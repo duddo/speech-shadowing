@@ -1,5 +1,13 @@
 package main
 
+import "log"
+
 func main() {
-	startServer()
+	log.Printf("Speech Shadowing %s", Version)
+
+	config := LoadConfig()
+
+	Connect(config)
+
+	// StartServer(config)
 }
