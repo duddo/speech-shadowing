@@ -162,10 +162,9 @@ func (db *Db) DeleteExercise(exercise SpeechExercise) error {
  * Segments
  */
 
-func (db *Db) GetSegments(id int) ([]SpeechSegment, error) {
-	rows, err := db.connection.Query("SELECT * FROM speech_segments WHERE id=?;", id)
+func (db *Db) GetSegments(segmentID string) ([]SpeechSegment, error) {
+	rows, err := db.connection.Query("SELECT * FROM speech_segments WHERE id=?;", segmentID)
 	if err != nil {
-
 		return nil, err
 	}
 
@@ -195,8 +194,8 @@ func (db *Db) GetSegments(id int) ([]SpeechSegment, error) {
 	return segments, nil
 }
 
-func (db *Db) InsertSegment(segment SpeechSegment) error {
-	stmt, err := db.connection.Prepare("INSERT INTO speech_segments(id, title)")
+func (db *Db) InsertSegment(exerciseId string, segment SpeechSegment) error {
+	stmt, err := db.connection.Prepare("INSERT INTO speech_segments(id, title, exercise_id) VALUES (?, ?, ?);")
 	if err != nil {
 		return err
 	}
@@ -209,7 +208,7 @@ func (db *Db) InsertSegment(segment SpeechSegment) error {
 	}(stmt)
 
 	log.Printf("Inserting segment: %s %s\n", segment.ID, segment.Title)
-	res, err := stmt.Exec(segment.ID, segment.Title)
+	res, err := stmt.Exec(exerciseId, segment.Title, exerciseId)
 	if err != nil {
 		return err
 	}

@@ -7,11 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func StartServer(config *Configuration) {
+func StartServer(config *Configuration, db *Db) {
 	router := gin.Default()
-	router.GET("/segments", getSegments)
-	router.GET("/segments/:id", getSegmentByID)
-	router.POST("/segments", postSegments)
+
+	router.GET("/api/exercises", getExercises(db))
+	router.POST("/api/exercises", postExercises(db))
+
+	router.GET("/api/segments/:exercise_id", getSegments(db))
+	router.POST("/api/segments/:exercise_id", postSegments(db))
 
 	err := router.Run(config.Addr())
 	if err != nil {
@@ -19,39 +22,77 @@ func StartServer(config *Configuration) {
 	}
 }
 
-func getSegments(c *gin.Context) {
-	segments := []SpeechSegment{
-		{ID: "1", Title: "ciao"},
-		{ID: "2", Title: "ciao2"},
-	}
+/*************************************
+ * Exercise
+ */
 
-	c.IndentedJSON(http.StatusOK, segments)
-}
-
-func getSegmentByID(c *gin.Context) {
-	id := c.Param("id")
-
-	segments := []SpeechSegment{
-		{ID: "1", Title: "ciao"},
-		{ID: "2", Title: "ciao2"},
-	}
-
-	for _, a := range segments {
-		if a.ID == id {
-			c.IndentedJSON(http.StatusOK, a)
+func getExercises(db *Db) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exercises, err := db.GetExercises()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
 		}
-	}
 
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Segment " + id + " not found"})
+		c.JSON(http.StatusOK, gin.H{"exercises": exercises})
+	}
 }
 
-func postSegments(c *gin.Context) {
-	var newSeg SpeechSegment
+func postExercises(db *Db) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var newExercise SpeechExercise
 
-	if err := c.BindJSON(&newSeg); err != nil {
-		return
+		err := c.BindJSON(&newExercise)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+
+		err = db.InsertExercise(newExercise)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"message": "Exercise added successfully", "created": newExercise})
 	}
+}
 
-	c.IndentedJSON(http.StatusCreated, newSeg)
+/*************************************
+ * Segments
+ */
+
+func getSegments(db *Db) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exerciseId := c.Param("exercise_id")
+
+		segments, err := db.GetSegments(exerciseId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"segments": segments})
+	}
+}
+
+func postSegments(db *Db) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exerciseId := c.Param("exercise_id")
+
+		var newSegment SpeechSegment
+		err := c.BindJSON(&newSegment)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+
+		err = db.InsertSegment(exerciseId, newSegment)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"message": "Segment added successfully", "created": newSegment})
+	}
 }

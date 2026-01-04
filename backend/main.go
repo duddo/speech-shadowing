@@ -16,7 +16,7 @@ func main() {
 	}
 
 	log.Println("Starting REST API")
-	//StartServer(config)
+	StartServer(config, db)
 
 	log.Println("Exiting...")
 	err = db.Close()

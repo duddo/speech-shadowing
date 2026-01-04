@@ -1,13 +1,30 @@
+################## exercises
+
+### GET all the exercises
+GET http://localhost:8080/api/exercises
+Accept: application/json
+
+### POST new exercise
+POST http://localhost:8080/api/exercises
+Accept: application/json
+
+{
+    "id": "1",
+    "title": "new exercise"
+}
+
+################## segments
+
 ### GET all the segments
-GET http://localhost:8080/segments
+GET http://localhost:8080/api/segments
 Accept: application/json
 
 ### GET segment by id
-GET http://localhost:8080/segments/2
+GET http://localhost:8080/api/segments/2
 Accept: application/json
 
 ### POST a new segment
-POST http://localhost:8080/segments
+POST http://localhost:8080/api/segments
 Accept: application/json
 
 {
