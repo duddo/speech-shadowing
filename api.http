@@ -1,5 +1,3 @@
-################## exercises
-
 ### GET all the exercises
 GET http://localhost:8080/api/exercises
 Accept: application/json
@@ -9,27 +7,48 @@ POST http://localhost:8080/api/exercises
 Accept: application/json
 
 {
-    "id": "1",
+    "id": null,
     "title": "new exercise"
 }
 
-################## segments
-
-### GET all the segments
-GET http://localhost:8080/api/segments
-Accept: application/json
-
-### GET segment by id
-GET http://localhost:8080/api/segments/2
-Accept: application/json
-
-### POST a new segment
-POST http://localhost:8080/api/segments
+### PUT exercise
+PUT http://localhost:8080/api/exercises/2
 Accept: application/json
 
 {
- "id": "3",
- "title": "hello"
+    "id": null,
+    "title": "no more new"
 }
 
-###
+### DELETE exercise
+DELETE http://localhost:8080/api/exercises/3
+Accept: application/json
+
+
+
+
+### GET segments by exercise_id
+GET http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+### POST a new segment to exercise_id
+POST http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+{
+ "id": null,
+ "title": "new segment"
+}
+
+### PUT segment
+PUT http://localhost:8080/api/exercises/1/segments/1
+Accept: application/json
+
+{
+    "id": null,
+    "title": "no more new"
+}
+
+### DELETE segment
+DELETE http://localhost:8080/api/exercises/1/segments/8
+Accept: application/json

@@ -1,11 +1,12 @@
 package main
 
 type SpeechSegment struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
+	ID         int64  `json:"id"`
+	Title      string `json:"title"`
+	ExerciseID int64  `json:"exercise_id"`
 }
 
 type SpeechExercise struct {
-	ID    string `json:"id"`
+	ID    int64  `json:"id"`
 	Title string `json:"title"`
 }
