@@ -10,7 +10,7 @@ type Configuration struct {
 	TmpPath    string
 }
 
-func LoadConfig() *Configuration {
+func NewConfiguration() *Configuration {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

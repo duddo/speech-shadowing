@@ -27,7 +27,9 @@ go.work.sum
 # env file
 .env
 
+# specific app directories
 tmp/
+data/
 
 # Editor/IDE
 .idea/

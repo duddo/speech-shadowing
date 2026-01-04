@@ -5,18 +5,23 @@ import "log"
 func main() {
 	log.Printf("Speech Shadowing %s", Version)
 
-	config := LoadConfig()
+	log.Println("Loading configuration")
+	config := NewConfiguration()
 
-	db, err := Connect(config)
+	log.Println("Starting database")
+	db, err := NewDb(config)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	// StartServer(config)
+	log.Println("Starting REST API")
+	//StartServer(config)
 
+	log.Println("Exiting...")
 	err = db.Close()
 	if err != nil {
+		log.Fatal(err)
 		return
 	}
 }
