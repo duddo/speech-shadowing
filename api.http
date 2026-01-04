@@ -37,7 +37,9 @@ Accept: application/json
 
 {
  "id": null,
- "title": "new segment"
+ "title": "new segment",
+ "spoken_text": "what a nice day",
+ "audio_id": "12345cafe"
 }
 
 ### PUT segment
@@ -46,7 +48,9 @@ Accept: application/json
 
 {
     "id": null,
-    "title": "no more new"
+    "title": "no more new",
+    "spoken_text": "day no more nice",
+    "audio_id": "cafecafe"
 }
 
 ### DELETE segment

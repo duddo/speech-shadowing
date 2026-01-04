@@ -18,31 +18,15 @@ func NewDb(config *Configuration) (*Db, error) {
 		return nil, err
 	}
 
-	log.Println("Creating speech_exercises")
-	createExercisesStmt := `CREATE TABLE IF NOT EXISTS speech_exercises (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL
-	);`
-	result, err := db.Exec(createExercisesStmt)
+	err = createExercises(db)
 	if err != nil {
-		log.Printf("CREATE speech_exercises %q: %s\n", err, createExercisesStmt)
 		return nil, err
 	}
-	log.Printf("Created speech_exercises: %s\n", result)
 
-	log.Println("Creating speech_segments")
-	createSegmentsStmt := `CREATE TABLE IF NOT EXISTS speech_segments (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		exercise_id TEXT NOT NULL,
-		FOREIGN KEY (exercise_id) REFERENCES speech_exercises(id) ON DELETE CASCADE ON UPDATE CASCADE
-	);`
-	result, err = db.Exec(createSegmentsStmt)
+	err = createSegments(db)
 	if err != nil {
-		log.Printf("CREATE speech_segments %q: %s\n", err, createSegmentsStmt)
 		return nil, err
 	}
-	log.Printf("Created speech_segments: %s\n", result)
 
 	return &Db{
 		connection: db,
@@ -56,6 +40,23 @@ func (db *Db) Close() error {
 /*************************************
  * Exercise
  */
+
+func createExercises(db *sql.DB) error {
+	log.Println("Creating speech_exercises")
+	createExercisesStmt := `CREATE TABLE IF NOT EXISTS speech_exercises (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL
+	);`
+	result, err := db.Exec(createExercisesStmt)
+	if err != nil {
+		log.Printf("CREATE speech_exercises %q: %s\n", err, createExercisesStmt)
+		return err
+	}
+
+	log.Printf("Created speech_exercises: %s\n", result)
+
+	return nil
+}
 
 func (db *Db) GetExercises() ([]SpeechExercise, error) {
 	rows, err := db.connection.Query("SELECT id, title FROM speech_exercises;")
@@ -165,8 +166,30 @@ func (db *Db) DeleteExercise(exerciseID int64) error {
  * Segments
  */
 
+func createSegments(db *sql.DB) error {
+	log.Println("Creating speech_segments")
+	createSegmentsStmt := `CREATE TABLE IF NOT EXISTS speech_segments (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL,
+		exercise_id TEXT NOT NULL,
+		spoken_text TEXT NOT NULL,
+		audio_id TEXT NOT NULL,
+		FOREIGN KEY (exercise_id) REFERENCES speech_exercises(id) ON DELETE CASCADE ON UPDATE CASCADE
+	);`
+	result, err := db.Exec(createSegmentsStmt)
+	if err != nil {
+		log.Printf("CREATE speech_segments %q: %s\n", err, createSegmentsStmt)
+		return err
+	}
+
+	log.Printf("Created speech_segments: %s\n", result)
+
+	return nil
+}
+
 func (db *Db) GetSegments(segmentID int64) ([]SpeechSegment, error) {
-	rows, err := db.connection.Query("SELECT id, title, exercise_id FROM speech_segments WHERE exercise_id=?;", segmentID)
+	rows, err := db.connection.Query(`SELECT id, title, exercise_id, spoken_text, audio_id
+		FROM speech_segments WHERE exercise_id=?;`, segmentID)
 	if err != nil {
 		return nil, err
 	}
@@ -184,20 +207,29 @@ func (db *Db) GetSegments(segmentID int64) ([]SpeechSegment, error) {
 		var id int64
 		var title string
 		var exerciseID int64
+		var spokenText string
+		var audioID string
 
-		err := rows.Scan(&id, &title, &exerciseID)
+		err := rows.Scan(&id, &title, &exerciseID, &spokenText, &audioID)
 		if err != nil {
 			return nil, err
 		}
 
-		segments = append(segments, SpeechSegment{ID: id, Title: title, ExerciseID: exerciseID})
+		segments = append(segments, SpeechSegment{
+			ID:         id,
+			Title:      title,
+			ExerciseID: exerciseID,
+			SpokenText: spokenText,
+			AudioID:    audioID})
 	}
 
 	return segments, nil
 }
 
 func (db *Db) InsertSegment(exerciseId int64, segment SpeechSegment) (*int64, error) {
-	stmt, err := db.connection.Prepare("INSERT INTO speech_segments(id, title, exercise_id) VALUES (NULL, ?, ?);")
+	stmt, err := db.connection.Prepare(`INSERT INTO 
+    	speech_segments(id, title, exercise_id, spoken_text, audio_id) 
+		VALUES (NULL, ?, ?, ?, ?);`)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +242,7 @@ func (db *Db) InsertSegment(exerciseId int64, segment SpeechSegment) (*int64, er
 	}(stmt)
 
 	log.Printf("Inserting segment: %d %s\n", segment.ID, segment.Title)
-	res, err := stmt.Exec(segment.Title, exerciseId)
+	res, err := stmt.Exec(segment.Title, exerciseId, segment.SpokenText, segment.AudioID)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +257,9 @@ func (db *Db) InsertSegment(exerciseId int64, segment SpeechSegment) (*int64, er
 }
 
 func (db *Db) UpdateSegment(segment SpeechSegment) error {
-	stmt, err := db.connection.Prepare("UPDATE speech_segments SET title = ? WHERE id = ?")
+	stmt, err := db.connection.Prepare(`UPDATE speech_segments 
+			SET title = ?, spoken_text = ?, audio_id = ?
+		    WHERE id = ?`)
 	if err != nil {
 		return err
 	}
@@ -238,7 +272,7 @@ func (db *Db) UpdateSegment(segment SpeechSegment) error {
 	}(stmt)
 
 	log.Printf("Updating segment: %d %s\n", segment.ID, segment.Title)
-	res, err := stmt.Exec(segment.Title, segment.ID)
+	res, err := stmt.Exec(segment.Title, segment.SpokenText, segment.AudioID, segment.ID)
 	if err != nil {
 		return err
 	}
