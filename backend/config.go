@@ -6,8 +6,10 @@ type Configuration struct {
 	Host       string
 	Port       string
 	DataPath   string
+	AudioPath  string
 	ConfigPath string
 	TmpPath    string
+	StaticPath string
 }
 
 func NewConfiguration() *Configuration {
@@ -31,8 +33,10 @@ func NewConfiguration() *Configuration {
 		Host:       host,
 		Port:       port,
 		DataPath:   rootPath + "data",
+		AudioPath:  rootPath + "data/audio",
 		ConfigPath: rootPath + "config",
 		TmpPath:    rootPath + "tmp",
+		StaticPath: rootPath + "static",
 	}
 }
 

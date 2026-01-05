@@ -1,15 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func StartServer(config *Configuration, db *Db) {
 	router := gin.Default()
+
+	//router.Static("/", config.StaticPath)
+	//router.Static("/audio", config.AudioPath)
+
+	router.POST("/api/do-exercise", doExercise(db, config))
 
 	router.GET("/api/exercises", getExercises(db))
 	router.POST("/api/exercises", postExercise(db))
@@ -24,6 +31,55 @@ func StartServer(config *Configuration, db *Db) {
 	err := router.Run(config.Addr())
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func doExercise(db *Db, config *Configuration) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		/* typescript:
+
+		...
+		formData.append("audio", file)
+		formData.append("payload", JSON.stringify({
+		  exercise_id: 2,
+		  segment_id: 1,
+		  audio_format: "ogg",
+		}))
+		...
+		*/
+		payloadStr := c.PostForm("payload")
+		if payloadStr == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Missing Payload"})
+			return
+		}
+		var payload SegmentSubmit
+		err := json.Unmarshal([]byte(payloadStr), &payload)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		file, err := c.FormFile("audio")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload file"})
+			return
+		}
+
+		guid := uuid.New()
+		filePath := config.TmpPath + "/" + guid.String() + ".mp4" //TODO capire l'estensione da mimetype?
+
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+			return
+		}
+
+		segmentAnswer, err := Shadowing(payload, filePath, db)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Segment submitted successfully", "answer": segmentAnswer})
 	}
 }
 
@@ -129,7 +185,7 @@ func getSegments(db *Db) gin.HandlerFunc {
 			return
 		}
 
-		segments, err := db.GetSegments(exerciseIdInt)
+		segments, err := db.GetSegments(exerciseIdInt, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

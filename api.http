@@ -56,3 +56,6 @@ Accept: application/json
 ### DELETE segment
 DELETE http://localhost:8080/api/exercises/1/segments/8
 Accept: application/json
+
+
+

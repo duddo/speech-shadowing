@@ -12,3 +12,17 @@ type SpeechSegment struct {
 	SpokenText string `json:"spoken_text"`
 	AudioID    string `json:"audio_id"`
 }
+
+type SegmentSubmit struct {
+	ExerciseID  int64  `json:"exercise_id"`
+	SegmentID   int64  `json:"segment_id"`
+	AudioFormat string `json:"audio_format"`
+}
+
+type SegmentAnswer struct {
+	ExerciseID int64   `json:"exercise_id"`
+	SegmentID  int64   `json:"segment_id"`
+	Transcript string  `json:"transcript"`
+	Rating     float32 `json:"rating"`
+	Timestamp  int64   `json:"timestamp"`
+}

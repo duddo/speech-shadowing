@@ -187,9 +187,18 @@ func createSegments(db *sql.DB) error {
 	return nil
 }
 
-func (db *Db) GetSegments(segmentID int64) ([]SpeechSegment, error) {
-	rows, err := db.connection.Query(`SELECT id, title, exercise_id, spoken_text, audio_id
-		FROM speech_segments WHERE exercise_id=?;`, segmentID)
+func (db *Db) GetSegments(exerciseID int64, segmentID *int64) ([]SpeechSegment, error) {
+	var rows *sql.Rows
+	var err error
+
+	if segmentID == nil {
+		rows, err = db.connection.Query(`SELECT id, title, exercise_id, spoken_text, audio_id
+			FROM speech_segments WHERE exercise_id=?;`, exerciseID)
+	} else {
+		rows, err = db.connection.Query(`SELECT id, title, exercise_id, spoken_text, audio_id
+			FROM speech_segments WHERE exercise_id=? AND id=?;`, exerciseID, segmentID)
+	}
+
 	if err != nil {
 		return nil, err
 	}
