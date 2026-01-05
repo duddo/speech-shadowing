@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -24,6 +25,11 @@ func NewDb(config *Configuration) (*Db, error) {
 	}
 
 	err = createSegments(db)
+	if err != nil {
+		return nil, err
+	}
+
+	err = createAnswers(db)
 	if err != nil {
 		return nil, err
 	}
@@ -309,6 +315,52 @@ func (db *Db) DeleteSegment(segmentID int64) error {
 		return err
 	}
 	log.Printf("Deleted segment: %d %s\n", segmentID, res)
+
+	return nil
+}
+
+/*************************************
+ * Shadowing Answers
+ */
+
+func createAnswers(db *sql.DB) error {
+	log.Println("Creating shadowing_answers")
+	createAnswersStmt := `CREATE TABLE IF NOT EXISTS shadowing_answers(
+    	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    	exercise_id INTEGER,
+    	segment_id INTEGER,
+    	transcript TEXT,
+    	rating REAL,
+    	datetime DATETIME,
+        FOREIGN KEY (exercise_id) REFERENCES speech_exercises(id),
+        FOREIGN KEY (segment_id) REFERENCES speech_segments(id)
+    );`
+	result, err := db.Exec(createAnswersStmt)
+	if err != nil {
+		log.Printf("Error creating shadowing_answers: %s\n", err)
+		return err
+	}
+
+	log.Printf("Created shadowing_answers: %s\n", result)
+
+	return nil
+}
+
+func (db *Db) InsertAnswer(answer SegmentAnswer) error {
+	stmt, err := db.connection.Prepare(`INSERT INTO shadowing_answers(
+		id, exercise_id, segment_id, transcript, rating, datetime)
+		VALUES (NULL, ?, ?, ?, ?, ?);`)
+	if err != nil {
+		return err
+	}
+
+	datetime := time.Unix(answer.Timestamp, 0)
+
+	log.Printf("Inserting answer")
+	_, err = stmt.Exec(answer.ExerciseID, answer.SegmentID, answer.Transcript, answer.Rating, datetime)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

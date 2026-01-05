@@ -24,6 +24,11 @@ func Shadowing(segmentSubmit SegmentSubmit, audioFile string, db *Db) (*SegmentA
 		Rating:     rating,
 	}
 
+	err = db.InsertAnswer(answer)
+	if err != nil {
+		return nil, err
+	}
+
 	return &answer, nil
 }
 
@@ -40,8 +45,8 @@ func speechToText(audioFile string) (*string, error) {
 		return nil, err
 	}
 
-	command = exec.Command("rm", audioFile, audioFile+".wav", audioFile+".wav.txt")
-	_, err = command.Output()
+	//command = exec.Command("rm", audioFile, audioFile+".wav", audioFile+".wav.txt")
+	//_, err = command.Output()
 
 	stringOut := string(out)
 	return &stringOut, nil
