@@ -59,3 +59,23 @@ Accept: application/json
 
 
 
+
+### Do exercise with MP4 file and segment submission
+POST http://localhost:8080/api/do-exercise
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="audio"; filename="hello.m4a"
+Content-Type: video/mp4
+
+< ./tmp/hello.m4a
+--boundary
+Content-Disposition: form-data; name="payload"
+Content-Type: application/json
+
+{
+    "exercise_id": 1,
+    "segment_id": 2,
+    "audio_format": "m4a"
+}
+--boundary--
