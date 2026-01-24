@@ -1,0 +1,30 @@
+###
+POST http://localhost:8080/api/exercises
+Accept: application/json
+
+{
+    "id": null,
+    "title": "Ok Computer"
+}
+
+###
+POST http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+{
+ "id": null,
+ "title": "Hello world",
+ "spoken_text": "Hello world",
+ "audio_file": "/audio/hello_world.mp3"
+}
+
+###
+POST http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+{
+ "id": null,
+ "title": "Fitter, happier.",
+ "spoken_text": "Fitter, happier, more productive.",
+ "audio_file": "/audio/fitter_happier.mp3"
+}
