@@ -13,9 +13,6 @@ import (
 func StartServer(config *Configuration, db *Db) {
 	router := gin.Default()
 
-	//router.Static("/", config.StaticPath)
-	//router.Static("/audio", config.AudioPath)
-
 	router.POST("/api/do-exercise", doExercise(db, config))
 
 	router.GET("/api/exercises", getExercises(db))
@@ -27,6 +24,12 @@ func StartServer(config *Configuration, db *Db) {
 	router.POST("/api/exercises/:exercise_id/segments", postSegment(db))
 	router.PUT("/api/exercises/:exercise_id/segments/:segment_id", putSegment(db))
 	router.DELETE("/api/exercises/:exercise_id/segments/:segment_id", deleteSegment(db))
+
+	router.Static("/audio", config.AudioPath)
+
+	router.NoRoute(func(c *gin.Context) {
+		c.File(config.StaticPath + "/index.html")
+	})
 
 	err := router.Run(config.Addr())
 	if err != nil {

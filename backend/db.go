@@ -223,9 +223,9 @@ func (db *Db) GetSegments(exerciseID int64, segmentID *int64) ([]SpeechSegment, 
 		var title string
 		var exerciseID int64
 		var spokenText string
-		var audioID string
+		var audioFile string
 
-		err := rows.Scan(&id, &title, &exerciseID, &spokenText, &audioID)
+		err := rows.Scan(&id, &title, &exerciseID, &spokenText, &audioFile)
 		if err != nil {
 			return nil, err
 		}
@@ -235,7 +235,7 @@ func (db *Db) GetSegments(exerciseID int64, segmentID *int64) ([]SpeechSegment, 
 			Title:      title,
 			ExerciseID: exerciseID,
 			SpokenText: spokenText,
-			AudioID:    audioID})
+			AudioFile:  audioFile})
 	}
 
 	return segments, nil
@@ -257,7 +257,7 @@ func (db *Db) InsertSegment(exerciseId int64, segment SpeechSegment) (*int64, er
 	}(stmt)
 
 	log.Printf("Inserting segment: %d %s\n", segment.ID, segment.Title)
-	res, err := stmt.Exec(segment.Title, exerciseId, segment.SpokenText, segment.AudioID)
+	res, err := stmt.Exec(segment.Title, exerciseId, segment.SpokenText, segment.AudioFile)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +287,7 @@ func (db *Db) UpdateSegment(segment SpeechSegment) error {
 	}(stmt)
 
 	log.Printf("Updating segment: %d %s\n", segment.ID, segment.Title)
-	res, err := stmt.Exec(segment.Title, segment.SpokenText, segment.AudioID, segment.ID)
+	res, err := stmt.Exec(segment.Title, segment.SpokenText, segment.AudioFile, segment.ID)
 	if err != nil {
 		return err
 	}

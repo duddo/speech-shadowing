@@ -33,7 +33,7 @@ func NewConfiguration() *Configuration {
 		Host:       host,
 		Port:       port,
 		DataPath:   rootPath + "data",
-		AudioPath:  rootPath + "data/audio",
+		AudioPath:  rootPath + "public/audio",
 		ConfigPath: rootPath + "config",
 		TmpPath:    rootPath + "tmp",
 		StaticPath: rootPath + "public",

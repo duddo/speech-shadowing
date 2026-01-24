@@ -10,7 +10,7 @@ type SpeechSegment struct {
 	Title      string `json:"title"`
 	ExerciseID int64  `json:"exercise_id"`
 	SpokenText string `json:"spoken_text"`
-	AudioID    string `json:"audio_id"`
+	AudioFile  string `json:"audio_file"`
 }
 
 type SegmentSubmit struct {
