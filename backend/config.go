@@ -36,7 +36,7 @@ func NewConfiguration() *Configuration {
 		AudioPath:  rootPath + "data/audio",
 		ConfigPath: rootPath + "config",
 		TmpPath:    rootPath + "tmp",
-		StaticPath: rootPath + "static",
+		StaticPath: rootPath + "public",
 	}
 }
 

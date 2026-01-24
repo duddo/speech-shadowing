@@ -13,7 +13,7 @@ type Db struct {
 }
 
 func NewDb(config *Configuration) (*Db, error) {
-	db, err := sql.Open("sqlite3", config.DataPath+"/data.db")
+	db, err := sql.Open("sqlite3", config.DataPath+"/data.sqlite")
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
