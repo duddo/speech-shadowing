@@ -1,10 +1,12 @@
-package internal
+package logic
 
 import (
 	"os/exec"
+	"speech-shadowing/internal"
+	"speech-shadowing/internal/database"
 )
 
-func Shadowing(segmentSubmit SegmentSubmit, audioFile string, db *Db) (*SegmentAnswer, error) {
+func Shadowing(segmentSubmit internal.SegmentSubmit, audioFile string, db *database.Db) (*internal.SegmentAnswer, error) {
 	transcript, err := speechToText(audioFile)
 	if err != nil {
 		return nil, err
@@ -17,7 +19,7 @@ func Shadowing(segmentSubmit SegmentSubmit, audioFile string, db *Db) (*SegmentA
 
 	rating := similarity(speechSegment[0].SpokenText, *transcript)
 
-	answer := SegmentAnswer{
+	answer := internal.SegmentAnswer{
 		ExerciseID: segmentSubmit.ExerciseID,
 		SegmentID:  segmentSubmit.SegmentID,
 		Transcript: *transcript,

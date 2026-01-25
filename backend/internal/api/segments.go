@@ -3,12 +3,13 @@ package api
 import (
 	"net/http"
 	"speech-shadowing/internal"
+	"speech-shadowing/internal/database"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func getSegments(db *internal.Db) gin.HandlerFunc {
+func getSegments(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 
@@ -28,7 +29,7 @@ func getSegments(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func postSegment(db *internal.Db) gin.HandlerFunc {
+func postSegment(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 		exerciseIdInt, err := strconv.ParseInt(exerciseId, 10, 64)
@@ -56,7 +57,7 @@ func postSegment(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func putSegment(db *internal.Db) gin.HandlerFunc {
+func putSegment(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 		exerciseIdInt, err := strconv.ParseInt(exerciseId, 10, 64)
@@ -91,7 +92,7 @@ func putSegment(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func deleteSegment(db *internal.Db) gin.HandlerFunc {
+func deleteSegment(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 		exerciseIdInt, err := strconv.ParseInt(exerciseId, 10, 64)

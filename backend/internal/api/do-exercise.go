@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"speech-shadowing/internal"
+	"speech-shadowing/internal/database"
+	"speech-shadowing/internal/logic"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func doExercise(db *internal.Db, config *internal.Configuration) gin.HandlerFunc {
+func doExercise(db *database.Db, config *internal.Configuration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		/* typescript:
 
@@ -48,7 +50,7 @@ func doExercise(db *internal.Db, config *internal.Configuration) gin.HandlerFunc
 			return
 		}
 
-		segmentAnswer, err := internal.Shadowing(payload, filePath, db)
+		segmentAnswer, err := logic.Shadowing(payload, filePath, db)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

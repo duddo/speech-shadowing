@@ -26,3 +26,8 @@ type SegmentAnswer struct {
 	Rating     float32 `json:"rating"`
 	Timestamp  int64   `json:"timestamp"`
 }
+
+type BulkSubmit struct {
+	Exercise SpeechExercise  `json:"exercise"`
+	Segments []SegmentSubmit `json:"segments"`
+}
