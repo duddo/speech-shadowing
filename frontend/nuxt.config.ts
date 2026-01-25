@@ -4,5 +4,17 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: ['@nuxt/ui'],
-  css: ['~/assets/css/main.css']
+  css: ['~/assets/css/main.css'],
+
+  nitro: {
+    devProxy: {
+      "/api/": "http://localhost:8080/api/",
+      "/audio/": "http://localhost:8080/audio/"
+    }
+  }
+  ,
+  vite: {
+    build: { sourcemap: true },
+    css: { devSourcemap: true }
+  }
 })
