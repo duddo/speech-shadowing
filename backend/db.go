@@ -135,12 +135,12 @@ func (db *Db) UpdateExercise(exercise SpeechExercise) error {
 		}
 	}(stmt)
 
-	log.Printf("Updating exercise: %s %s\n", exercise.ID, exercise.Title)
+	log.Printf("Updating exercise: %d %s\n", exercise.ID, exercise.Title)
 	res, err := stmt.Exec(exercise.Title, exercise.ID)
 	if err != nil {
 		return err
 	}
-	log.Printf("Updated exercise %s: %s\n", exercise.ID, res)
+	log.Printf("Updated exercise %d: %s\n", exercise.ID, res)
 
 	return nil
 }
@@ -158,7 +158,7 @@ func (db *Db) DeleteExercise(exerciseID int64) error {
 		}
 	}(stmt)
 
-	log.Printf("Deleting exercise: %d %s\n", exerciseID)
+	log.Printf("Deleting exercise: %d\n", exerciseID)
 	res, err := stmt.Exec(exerciseID)
 	if err != nil {
 		return err
@@ -309,7 +309,7 @@ func (db *Db) DeleteSegment(segmentID int64) error {
 		}
 	}(stmt)
 
-	log.Printf("Deleting segment: %d %s\n", segmentID)
+	log.Printf("Deleting segment: %d\n", segmentID)
 	res, err := stmt.Exec(segmentID)
 	if err != nil {
 		return err
