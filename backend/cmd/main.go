@@ -1,22 +1,26 @@
 package main
 
-import "log"
+import (
+	"log"
+	"speech-shadowing/internal"
+	"speech-shadowing/internal/api"
+)
 
 func main() {
-	log.Printf("Speech Shadowing %s", Version)
+	log.Printf("Speech Shadowing %s", internal.Version)
 
 	log.Println("Loading configuration")
-	config := NewConfiguration()
+	config := internal.NewConfiguration()
 
 	log.Println("Starting database")
-	db, err := NewDb(config)
+	db, err := internal.NewDb(config)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
 	log.Println("Starting REST API")
-	StartServer(config, db)
+	api.StartServer(config, db)
 
 	log.Println("Exiting...")
 	err = db.Close()

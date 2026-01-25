@@ -1,4 +1,4 @@
-package main
+package internal
 
 type SpeechExercise struct {
 	ID    int64  `json:"id"`
