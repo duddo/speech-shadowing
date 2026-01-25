@@ -4,7 +4,7 @@ Accept: application/json
 
 {
     "id": null,
-    "title": "Ok Computer"
+    "title": "OK Computer"
 }
 
 ###
@@ -15,7 +15,7 @@ Accept: application/json
  "id": null,
  "title": "Hello world",
  "spoken_text": "Hello world",
- "audio_file": "/audio/hello_world.mp3"
+ "audio_file": "/audio/hello-world.mp3"
 }
 
 ###
@@ -26,5 +26,5 @@ Accept: application/json
  "id": null,
  "title": "Fitter, happier.",
  "spoken_text": "Fitter, happier, more productive.",
- "audio_file": "/audio/fitter_happier.mp3"
+ "audio_file": "/audio/fitter-happier.mp3"
 }
