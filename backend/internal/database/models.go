@@ -9,7 +9,3 @@ import (
 type Db struct {
 	connection *sql.DB
 }
-
-type Transaction struct {
-	tx *sql.Tx
-}

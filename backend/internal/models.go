@@ -29,5 +29,5 @@ type SegmentAnswer struct {
 
 type BulkSubmit struct {
 	Exercise SpeechExercise  `json:"exercise"`
-	Segments []SegmentSubmit `json:"segments"`
+	Segments []SpeechSegment `json:"segments"`
 }

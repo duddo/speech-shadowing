@@ -4,6 +4,7 @@ import (
 	"log"
 	"speech-shadowing/internal"
 	"speech-shadowing/internal/api"
+	"speech-shadowing/internal/database"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 	config := internal.NewConfiguration()
 
 	log.Println("Starting database")
-	db, err := internal.NewDb(config)
+	db, err := database.NewDb(config)
 	if err != nil {
 		log.Fatal(err)
 		return

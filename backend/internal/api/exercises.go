@@ -3,12 +3,13 @@ package api
 import (
 	"net/http"
 	"speech-shadowing/internal"
+	"speech-shadowing/internal/database"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func getExercises(db *internal.Db) gin.HandlerFunc {
+func getExercises(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exercises, err := db.GetExercises()
 		if err != nil {
@@ -20,7 +21,7 @@ func getExercises(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func postExercise(db *internal.Db) gin.HandlerFunc {
+func postExercise(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var newExercise internal.SpeechExercise
 
@@ -42,7 +43,7 @@ func postExercise(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func putExercise(db *internal.Db) gin.HandlerFunc {
+func putExercise(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 
@@ -72,7 +73,7 @@ func putExercise(db *internal.Db) gin.HandlerFunc {
 	}
 }
 
-func deleteExercise(db *internal.Db) gin.HandlerFunc {
+func deleteExercise(db *database.Db) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		exerciseId := c.Param("exercise_id")
 

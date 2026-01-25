@@ -38,14 +38,3 @@ func NewDb(config *internal.Configuration) (*Db, error) {
 func (db *Db) Close() error {
 	return db.connection.Close()
 }
-
-func (db *Db) BeginTransaction() (*Transaction, error) {
-	tx, err := db.connection.Begin()
-	if err != nil {
-		return nil, err
-	}
-
-	return &Transaction{
-		tx: tx,
-	}, nil
-}
