@@ -33,7 +33,6 @@ data/
 
 # Editor/IDE
 .idea/
-.vscode/
 .github/
 
 # Logs
