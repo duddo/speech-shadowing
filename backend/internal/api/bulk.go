@@ -27,10 +27,12 @@ func postBulk(db *database.Db) gin.HandlerFunc {
 		}
 
 		for _, segment := range bulk.Segments {
-			err := generateAudioSample(segment)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-				return
+			if segment.GenerateAudio {
+				err := generateAudioSample(segment)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+					return
+				}
 			}
 
 			_, err = db.InsertSegment(*insertedID, segment)
@@ -45,10 +47,7 @@ func postBulk(db *database.Db) gin.HandlerFunc {
 }
 
 func generateAudioSample(segment internal.SpeechSegment) error {
-	// if file exists, return it
-	// else generate it with tts engine and return path
-
-	audioFilePath := "." + segment.AudioFile
+	audioFilePath := "./public" + segment.AudioFile
 
 	if audioFilePath != "" && fileExists(audioFilePath) {
 		return nil

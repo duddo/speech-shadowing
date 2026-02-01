@@ -10,8 +10,8 @@
         class="flex-shrink-0 w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center transition-colors"
         :title="isPlaying ? 'Pause' : 'Play'"
       >
-        <span v-if="!isPlaying" class="text-2xl">▶</span>
-        <span v-else class="text-2xl">⏸</span>
+        <UIcon v-if="!isPlaying" name="i-heroicons-play-solid" class="w-6 h-6" />
+        <UIcon v-else name="i-heroicons-pause-solid" class="w-6 h-6" />
       </button>
       <div ref="waveformContainer" class="flex-grow"></div>
     </div>

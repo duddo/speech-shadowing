@@ -6,11 +6,12 @@ type SpeechExercise struct {
 }
 
 type SpeechSegment struct {
-	ID         int64  `json:"id"`
-	Title      string `json:"title"`
-	ExerciseID int64  `json:"exercise_id"`
-	SpokenText string `json:"spoken_text"`
-	AudioFile  string `json:"audio_file"`
+	ID            int64  `json:"id"`
+	Title         string `json:"title"`
+	ExerciseID    int64  `json:"exercise_id"`
+	SpokenText    string `json:"spoken_text"`
+	AudioFile     string `json:"audio_file"`
+	GenerateAudio bool   `json:"generate_audio"`
 }
 
 type SegmentSubmit struct {
