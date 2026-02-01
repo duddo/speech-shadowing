@@ -21,6 +21,7 @@ go.work.sum
 # Backend-specific directories
 tmp/
 data/
+public/
 
 # Shared environment and system files
 .env
