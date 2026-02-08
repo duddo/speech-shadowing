@@ -7,6 +7,8 @@ export interface Segment {
 }
 
 export interface SegmentAnswer {
-  rating: number
+  exercise_id: number
+  segment_id: number
   transcript: string
+  rating: number
 }

@@ -40,7 +40,7 @@ func (db *Db) InsertAnswer(answer internal.SegmentAnswer) error {
 		return err
 	}
 
-	datetime := time.Unix(answer.Timestamp, 0)
+	datetime := time.Unix(answer.Datetime, 0)
 
 	log.Printf("Inserting answer")
 	_, err = stmt.Exec(answer.ExerciseID, answer.SegmentID, answer.Transcript, answer.Rating, datetime)

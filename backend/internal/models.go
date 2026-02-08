@@ -25,7 +25,7 @@ type SegmentAnswer struct {
 	SegmentID  int64   `json:"segment_id"`
 	Transcript string  `json:"transcript"`
 	Rating     float32 `json:"rating"`
-	Timestamp  int64   `json:"timestamp"`
+	Datetime   int64   `json:"datetime"`
 }
 
 type BulkSubmit struct {

@@ -177,7 +177,7 @@ const submitAnswer = async () => {
     const data = await response.json()
 
     if (response.ok) {
-      submitResult.value = { rating: data.rating, transcript: data.transcript }
+      submitResult.value = data.answer
       state.value = State.Result
     } else {
       errorMessage.value = data.error || 'Failed to submit'
