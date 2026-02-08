@@ -4,10 +4,12 @@ import (
 	"os/exec"
 	"speech-shadowing/internal"
 	"speech-shadowing/internal/database"
+	"strings"
+	"unicode"
 )
 
-func Shadowing(segmentSubmit internal.SegmentSubmit, audioFile string, db *database.Db) (*internal.SegmentAnswer, error) {
-	transcript, err := speechToText(audioFile)
+func Shadowing(segmentSubmit internal.SegmentSubmit, audioFile string, db *database.Db, config *internal.Configuration) (*internal.SegmentAnswer, error) {
+	transcript, err := speechToText(audioFile, config.WhisperModelPath)
 	if err != nil {
 		return nil, err
 	}
@@ -34,21 +36,18 @@ func Shadowing(segmentSubmit internal.SegmentSubmit, audioFile string, db *datab
 	return &answer, nil
 }
 
-func speechToText(audioFile string) (*string, error) {
+func speechToText(audioFile string, whisperModelPath string) (*string, error) {
 	command := exec.Command("ffmpeg", "-i", audioFile, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", audioFile+".wav")
+	_, err := command.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	command = exec.Command("whisper-cli", "--no-timestamps", "--model", whisperModelPath, audioFile+".wav")
 	out, err := command.Output()
 	if err != nil {
 		return nil, err
 	}
-
-	command = exec.Command("whisper-cli", "-m", "tmp/ggml-base.en.bin", audioFile+".wav", "--output-txt", "tmp")
-	out, err = command.Output()
-	if err != nil {
-		return nil, err
-	}
-
-	//command = exec.Command("rm", audioFile, audioFile+".wav", audioFile+".wav.txt")
-	//_, err = command.Output()
 
 	stringOut := string(out)
 	return &stringOut, nil
@@ -58,9 +57,26 @@ func similarity(a, b string) float32 {
 	if a == "" && b == "" {
 		return 1.0
 	}
-	dist := levenshtein(a, b)
-	maxLen := max(len(a), len(b))
+	normalizedA, lenA := normalize(a)
+	normalizedB, lenB := normalize(b)
+	dist := levenshtein(normalizedA, normalizedB)
+	maxLen := max(lenA, lenB)
 	return 1.0 - float32(dist)/float32(maxLen)
+}
+
+func normalize(s string) (string, int) {
+	// Convert to lowercase
+	s = strings.ToLower(s)
+	// Remove punctuation and extra whitespace
+	s = strings.Map(func(r rune) rune {
+		if unicode.IsLetter(r) || unicode.IsNumber(r) || unicode.IsSpace(r) {
+			return r
+		}
+		return -1
+	}, s)
+	// Trim and collapse multiple spaces
+	normalized := strings.Join(strings.Fields(s), " ")
+	return normalized, len(normalized)
 }
 
 func levenshtein(a, b string) int {
