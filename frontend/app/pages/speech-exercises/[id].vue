@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-
-interface Segment {
-  id: number
-  title: string
-  exercise_id: number
-  spoken_text: string
-  audio_file: string
-}
+import type { Segment } from '~/types/models'
 
 const route = useRoute()
 const exerciseId = Number(route.params.id)
@@ -74,11 +67,11 @@ onMounted(async () => {
 
       <SpeechAnswer v-if="currentSegment" :segment="currentSegment" :exerciseId="exerciseId" />
 
-      <div class="flex gap-2 mt-6">
-        <UButton @click="prevSegment" :disabled="currentSegmentIndex === 0">
+      <div class="flex gap-2 mt-6 max-w-xs mx-auto">
+        <UButton @click="prevSegment" :disabled="currentSegmentIndex === 0" class="flex-1">
           Previous
         </UButton>
-        <UButton @click="nextSegment" :disabled="isLastSegment">
+        <UButton @click="nextSegment" :disabled="isLastSegment" class="flex-1">
           Next
         </UButton>
       </div>

@@ -2,7 +2,7 @@
   <UApp>
     <div class="shadow-sm px-4 py-3">
       <div class="container mx-auto flex items-center gap-4">
-        <h1 class="text-xl font-bold">Speech shadowing</h1>
+        <h1 class="text-2xl font-bold">Speech shadowing</h1>
         <Breadcrumb :links="breadcrumbLinks" />
       </div>
     </div>

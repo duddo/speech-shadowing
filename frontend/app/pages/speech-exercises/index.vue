@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import SpeechExercise from "~/components/SpeechExercise.vue";
-
-interface Exercise {
-  id: number;
-  title: string;
-  description: string;
-}
+import type { Exercise } from "~/types/models";
 
 const exercises = ref<Exercise[]>([]);
 const loading = ref(true);
@@ -25,16 +20,14 @@ onMounted(async () => {
 
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Exercise list</h1>
+    <h1 class="text-xl font-bold mb-4">Choose an exercise</h1>
 
     <div v-if="loading">Loading exercises...</div>
     <div v-else>
       <SpeechExercise
         v-for="exercise in exercises"
         :key="exercise.id"
-        :title="exercise.title"
-        :description="exercise.description"
-        :id="exercise.id"
+        :exercise="exercise"
       />
     </div>
   </div>

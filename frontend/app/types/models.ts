@@ -1,3 +1,9 @@
+export interface Exercise {
+  id: number
+  title: string
+  description: string
+}
+
 export interface Segment {
   id: number
   title: string

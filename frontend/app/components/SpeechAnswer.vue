@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from 'vue'
-import type { SegmentAnswer } from '@/types/models'
+import type { SegmentAnswer, Segment } from '@/types/models'
 
 enum State {
   Idle = 'idle',
@@ -93,7 +93,7 @@ enum State {
 }
 
 const props = defineProps<{
-  segment: { id: number; exercise_id: number }
+  segment: Segment
   exerciseId: number
 }>()
 
