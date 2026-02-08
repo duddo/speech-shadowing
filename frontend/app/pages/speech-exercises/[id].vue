@@ -51,8 +51,6 @@ onMounted(async () => {
 
 <template>
   <div class="container mx-auto p-4">
-    <UButton to="/speech-exercises" class="mb-4">Back to Exercises</UButton>
-
     <h1 class="text-3xl font-bold mb-4">{{ exerciseTitle }}</h1>
     
     <div v-if="loading" class="text-center py-8">

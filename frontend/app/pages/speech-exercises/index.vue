@@ -24,9 +24,7 @@ onMounted(async () => {
 
 <template>
   <div class="container mx-auto p-4">
-    <UButton to="/" class="mb-4">Home</UButton>
-
-    <h1 class="text-3xl font-bold mb-4">Speech exercises</h1>
+    <h1 class="text-2xl font-bold mb-4">Exercise list</h1>
 
     <div v-if="loading">Loading exercises...</div>
     <div v-else>
