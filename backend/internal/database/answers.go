@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"speech-shadowing/internal"
-	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -17,7 +16,7 @@ func createAnswers(db *sql.DB) error {
     	segment_id INTEGER,
     	transcript TEXT,
     	rating REAL,
-    	datetime DATETIME,
+    	datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (exercise_id) REFERENCES speech_exercises(id),
         FOREIGN KEY (segment_id) REFERENCES speech_segments(id)
     );`
@@ -34,16 +33,14 @@ func createAnswers(db *sql.DB) error {
 
 func (db *Db) InsertAnswer(answer internal.SegmentAnswer) error {
 	stmt, err := db.connection.Prepare(`INSERT INTO shadowing_answers(
-		id, exercise_id, segment_id, transcript, rating, datetime)
-		VALUES (NULL, ?, ?, ?, ?, ?);`)
+		id, exercise_id, segment_id, transcript, rating)
+		VALUES (NULL, ?, ?, ?, ?);`)
 	if err != nil {
 		return err
 	}
 
-	datetime := time.Unix(answer.Datetime, 0)
-
 	log.Printf("Inserting answer")
-	_, err = stmt.Exec(answer.ExerciseID, answer.SegmentID, answer.Transcript, answer.Rating, datetime)
+	_, err = stmt.Exec(answer.ExerciseID, answer.SegmentID, answer.Transcript, answer.Rating)
 	if err != nil {
 		return err
 	}

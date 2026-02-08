@@ -1,8 +1,9 @@
 package internal
 
 type SpeechExercise struct {
-	ID    int64  `json:"id"`
-	Title string `json:"title"`
+	ID          int64  `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 type SpeechSegment struct {

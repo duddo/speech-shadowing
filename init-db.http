@@ -5,7 +5,8 @@ Accept: application/json
 {
     "exercise": {
         "id": null,
-        "title": "OK Computer"
+        "title": "OK Computer",
+        "description": "\"Fitter Happier\" lyrics from Radiohead's OK Computer 1997 album"
     },
     "segments": [
         {

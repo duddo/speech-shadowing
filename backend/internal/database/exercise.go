@@ -12,7 +12,8 @@ func createExercises(db *sql.DB) error {
 	log.Println("Creating speech_exercises")
 	createExercisesStmt := `CREATE TABLE IF NOT EXISTS speech_exercises (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL
+		title TEXT NOT NULL,
+		description TEXT NOT NULL DEFAULT ''
 	);`
 	result, err := db.Exec(createExercisesStmt)
 	if err != nil {
@@ -26,7 +27,7 @@ func createExercises(db *sql.DB) error {
 }
 
 func (db *Db) GetExercises() ([]internal.SpeechExercise, error) {
-	rows, err := db.connection.Query("SELECT id, title FROM speech_exercises;")
+	rows, err := db.connection.Query("SELECT id, title, description FROM speech_exercises;")
 	if err != nil {
 		return nil, err
 	}
@@ -43,20 +44,21 @@ func (db *Db) GetExercises() ([]internal.SpeechExercise, error) {
 	for rows.Next() {
 		var id int64
 		var title string
+		var description string
 
-		err := rows.Scan(&id, &title)
+		err := rows.Scan(&id, &title, &description)
 		if err != nil {
 			return nil, err
 		}
 
-		exercises = append(exercises, internal.SpeechExercise{ID: id, Title: title})
+		exercises = append(exercises, internal.SpeechExercise{ID: id, Title: title, Description: description})
 	}
 
 	return exercises, nil
 }
 
 func (db *Db) InsertExercise(exercise internal.SpeechExercise) (*int64, error) {
-	stmt, err := db.connection.Prepare("INSERT INTO speech_exercises(id, title) VALUES (NULL, ?);")
+	stmt, err := db.connection.Prepare("INSERT INTO speech_exercises(id, title, description) VALUES (NULL, ?, ?);")
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +71,7 @@ func (db *Db) InsertExercise(exercise internal.SpeechExercise) (*int64, error) {
 	}(stmt)
 
 	log.Printf("Inserting exercise: \"%s\"\n", exercise.Title)
-	res, err := stmt.Exec(exercise.Title)
+	res, err := stmt.Exec(exercise.Title, exercise.Description)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +86,7 @@ func (db *Db) InsertExercise(exercise internal.SpeechExercise) (*int64, error) {
 }
 
 func (db *Db) UpdateExercise(exercise internal.SpeechExercise) error {
-	stmt, err := db.connection.Prepare("UPDATE speech_exercises SET title = ? WHERE id = ?;")
+	stmt, err := db.connection.Prepare("UPDATE speech_exercises SET title = ?, description = ? WHERE id = ?;")
 	if err != nil {
 		return err
 	}
@@ -97,7 +99,7 @@ func (db *Db) UpdateExercise(exercise internal.SpeechExercise) error {
 	}(stmt)
 
 	log.Printf("Updating exercise: %d %s\n", exercise.ID, exercise.Title)
-	res, err := stmt.Exec(exercise.Title, exercise.ID)
+	res, err := stmt.Exec(exercise.Title, exercise.Description, exercise.ID)
 	if err != nil {
 		return err
 	}
