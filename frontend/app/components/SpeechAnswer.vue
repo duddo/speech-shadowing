@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount, watch } from 'vue'
 import type { SegmentAnswer, Segment } from '@/types/models'
 
 enum State {
@@ -107,6 +107,10 @@ const waveformRef = ref<any>(null)
 
 let mediaRecorder: MediaRecorder | null = null
 let recordingInterval: ReturnType<typeof setInterval> | null = null
+
+watch(() => props.segment.id, () => {
+  reset()
+})
 
 const toggleRecording = async () => {
   if (state.value === State.Recording) {
