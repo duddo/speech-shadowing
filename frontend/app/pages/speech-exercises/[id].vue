@@ -74,6 +74,8 @@ onMounted(async () => {
 
       <SpeechSegment v-if="currentSegment" :segment="currentSegment" />
 
+      <SpeechAnswer v-if="currentSegment" :segment="currentSegment" :exerciseId="exerciseId" />
+
       <div class="flex gap-2 mt-6">
         <UButton @click="prevSegment" :disabled="currentSegmentIndex === 0">
           Previous
