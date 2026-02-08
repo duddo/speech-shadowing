@@ -1,12 +1,26 @@
 <template>
   <UCard class="mt-6">
     <template #header>
-      <h3>Record what you hear:</h3>
+      <div v-if="state === State.Idle">
+        <h3>Record what you hear:</h3>
+      </div>
+      <div v-else-if="state === State.Recording">
+        <h3>Recording...</h3>
+      </div>
+      <div v-else-if="state === State.Submitting">
+        <h3>Submitting...</h3>
+      </div>
+      <div v-else-if="state === State.Result">
+        <h3>Done</h3>
+      </div>
+      <div v-else-if="state === State.Error">
+        <h3>Error</h3>
+      </div>
     </template>
 
     <div class="space-y-4">
       <!-- Idle / Recording -->
-      <div v-if="state === State.Idle || state === State.Recording" class="flex gap-4 items-center">
+      <div v-if="state === State.Idle || state === State.Recording" class="flex gap-4 items-center justify-center">
         <RecordingButton
           :is-recording="state === State.Recording"
           :disabled="false"
@@ -19,6 +33,7 @@
 
       <!-- Submitting / Result / Error: show waveform -->
       <template v-if="state === State.Submitting || state === State.Result || state === State.Error">
+        
         <div class="flex gap-4 items-center">
           <PlayPauseButton
             :is-playing="isPlaying"
@@ -38,38 +53,28 @@
         </div>
 
         <!-- Result -->
-        <div v-if="state === State.Result && submitResult" class="space-y-2 p-4 rounded-lg bg-green-50 border border-green-200">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-green-700">Accuracy:</span>
-            <span class="text-lg font-bold text-green-600">{{ (submitResult.rating * 100).toFixed(1) }}%</span>
-          </div>
-          <p class="text-sm text-green-700">
-            <strong>Transcript:</strong> {{ submitResult.transcript }}
-          </p>
-          <UButton
-            @click="reset"
-            icon="i-heroicons-arrow-path"
-            variant="soft"
-            size="sm"
-          >
-            Try again
-          </UButton>
-        </div>
+        <AnswerResult
+          v-if="state === State.Result && submitResult"
+          :rating="submitResult.rating"
+          :transcript="submitResult.transcript"
+        />
 
         <!-- Error -->
         <div v-if="state === State.Error" class="p-4 rounded-lg bg-red-50 border border-red-200">
           <p class="text-red-700 text-sm">{{ errorMessage }}</p>
-          <UButton
-            @click="reset"
-            icon="i-heroicons-arrow-path"
-            color="error"
-            variant="soft"
-            size="sm"
-            class="mt-2"
-          >
-            Try again
-          </UButton>
         </div>
+
+        <!-- Try again button (for both Result and Error states) -->
+        <UButton
+          v-if="state === State.Result || state === State.Error"
+          @click="reset"
+          icon="i-heroicons-arrow-path"
+          variant="soft"
+          size="lg"
+          block
+        >
+          Try again
+        </UButton>
       </template>
     </div>
   </UCard>
@@ -77,6 +82,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from 'vue'
+import type { SegmentAnswer } from '@/types/models'
 
 enum State {
   Idle = 'idle',
@@ -84,11 +90,6 @@ enum State {
   Submitting = 'submitting',
   Result = 'result',
   Error = 'error',
-}
-
-interface SubmitResultData {
-  rating: number
-  transcript: string
 }
 
 const props = defineProps<{
@@ -100,7 +101,7 @@ const state = ref<State>(State.Idle)
 const recordingTime = ref(0)
 const audioBlob = ref<Blob | null>(null)
 const isPlaying = ref(false)
-const submitResult = ref<SubmitResultData | null>(null)
+const submitResult = ref<SegmentAnswer | null>(null)
 const errorMessage = ref('')
 const waveformRef = ref<any>(null)
 
