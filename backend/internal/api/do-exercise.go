@@ -50,7 +50,7 @@ func doExercise(db *database.Db, config *internal.Configuration) gin.HandlerFunc
 			return
 		}
 
-		segmentAnswer, err := logic.Shadowing(payload, filePath, db)
+		segmentAnswer, err := logic.Shadowing(payload, filePath, db, config)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

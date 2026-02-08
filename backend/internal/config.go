@@ -3,13 +3,14 @@ package internal
 import "os"
 
 type Configuration struct {
-	Host       string
-	Port       string
-	DataPath   string
-	AudioPath  string
-	ConfigPath string
-	TmpPath    string
-	StaticPath string
+	Host             string
+	Port             string
+	DataPath         string
+	AudioPath        string
+	ConfigPath       string
+	TmpPath          string
+	StaticPath       string
+	WhisperModelPath string
 }
 
 func NewConfiguration() *Configuration {
@@ -30,13 +31,14 @@ func NewConfiguration() *Configuration {
 	}
 
 	return &Configuration{
-		Host:       host,
-		Port:       port,
-		DataPath:   rootPath + "data",
-		AudioPath:  rootPath + "public/audio",
-		ConfigPath: rootPath + "config",
-		TmpPath:    rootPath + "tmp",
-		StaticPath: rootPath + "public",
+		Host:             host,
+		Port:             port,
+		DataPath:         rootPath + "data",
+		AudioPath:        rootPath + "public/audio",
+		ConfigPath:       rootPath + "config",
+		TmpPath:          rootPath + "tmp",
+		StaticPath:       rootPath + "public",
+		WhisperModelPath: rootPath + "data/ggml-base.en.bin",
 	}
 }
 
