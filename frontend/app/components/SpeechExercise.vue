@@ -10,8 +10,11 @@
 <template>
   <UCard class="speech-exercise">
     <div class="flex items-center justify-between">
-      <h2>{{ title }}</h2>
-      <UButton icon="i-heroicons-chevron-right-20-solid" size="sm" variant="ghost" @click="startExercise">
+      <div>
+        <h2>{{ title }}</h2>
+        <p v-if="description" class="text-sm text-gray-600 mt-1">{{ description }}</p>
+      </div>
+      <UButton icon="i-heroicons-chevron-right-20-solid" size="lg" variant="ghost" @click="startExercise">
         Start
       </UButton>
     </div>
@@ -24,6 +27,7 @@ const router = useRouter();
 
 const props = defineProps<{
   title: string;
+  description: string;
   id: number;
 }>();
 

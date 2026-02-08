@@ -4,6 +4,7 @@ import SpeechExercise from "~/components/SpeechExercise.vue";
 interface Exercise {
   id: number;
   title: string;
+  description: string;
 }
 
 const exercises = ref<Exercise[]>([]);
@@ -32,6 +33,7 @@ onMounted(async () => {
         v-for="exercise in exercises"
         :key="exercise.id"
         :title="exercise.title"
+        :description="exercise.description"
         :id="exercise.id"
       />
     </div>
