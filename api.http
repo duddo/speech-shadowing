@@ -1,0 +1,81 @@
+### GET all the exercises
+GET http://localhost:8080/api/exercises
+Accept: application/json
+
+### POST new exercise
+POST http://localhost:8080/api/exercises
+Accept: application/json
+
+{
+    "id": null,
+    "title": "new exercise"
+}
+
+### PUT exercise
+PUT http://localhost:8080/api/exercises/2
+Accept: application/json
+
+{
+    "id": null,
+    "title": "no more new"
+}
+
+### DELETE exercise
+DELETE http://localhost:8080/api/exercises/3
+Accept: application/json
+
+
+
+
+### GET segments by exercise_id
+GET http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+### POST a new segment to exercise_id
+POST http://localhost:8080/api/exercises/1/segments
+Accept: application/json
+
+{
+ "id": null,
+ "title": "new segment",
+ "spoken_text": "what a nice day",
+ "audio_id": "12345cafe"
+}
+
+### PUT segment
+PUT http://localhost:8080/api/exercises/1/segments/1
+Accept: application/json
+
+{
+    "id": null,
+    "title": "no more new",
+    "spoken_text": "day no more nice",
+    "audio_id": "cafecafe"
+}
+
+### DELETE segment
+DELETE http://localhost:8080/api/exercises/1/segments/8
+Accept: application/json
+
+
+
+
+### Do exercise with MP4 file and segment submission
+POST http://localhost:8080/api/do-exercise
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="audio"; filename="hello.m4a"
+Content-Type: video/mp4
+
+< ./tmp/hello.m4a
+--boundary
+Content-Disposition: form-data; name="payload"
+Content-Type: application/json
+
+{
+    "exercise_id": 1,
+    "segment_id": 2,
+    "audio_format": "m4a"
+}
+--boundary--

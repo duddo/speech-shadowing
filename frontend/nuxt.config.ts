@@ -1,0 +1,21 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  compatibilityDate: '2025-07-15',
+  devtools: { enabled: true },
+  ssr: false,
+
+  modules: ['@nuxt/ui'],
+  css: ['~/assets/css/main.css'],
+
+  nitro: {
+    devProxy: {
+      "/api/": "http://localhost:8080/api/",
+      "/audio/": "http://localhost:8080/audio/"
+    }
+  }
+  ,
+  vite: {
+    build: { sourcemap: true },
+    css: { devSourcemap: true }
+  }
+})

@@ -1,0 +1,27 @@
+###
+POST http://localhost:8080/api/bulk
+Accept: application/json
+
+{
+    "exercise": {
+        "id": null,
+        "title": "OK Computer",
+        "description": "\"Fitter Happier\" lyrics from Radiohead's OK Computer 1997 album"
+    },
+    "segments": [
+        {
+            "id": null,
+            "title": "Hello world",
+            "spoken_text": "Hello world",
+            "audio_file": "/audio/hello-world.mp3",
+            "generate_audio": true
+        },
+        {
+            "id": null,
+            "title": "Fitter, happier.",
+            "spoken_text": "Fitter. Happier. More productive.",
+            "audio_file": "/audio/fitter-happier.mp3",
+            "generate_audio": true
+        }
+    ]
+}
